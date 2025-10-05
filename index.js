@@ -13,17 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryMap = {};
     const root = document.documentElement; // Representa a tag <html>
 
+    // Variável para armazenar a lista de aplicativos
+    let appData = JSON.parse(localStorage.getItem('appData')) || [];
+    
     // --- FUNÇÕES AUXILIARES DE COR (Correção do Escurecimento) ---
 
     /**
      * Converte HEX para HSL, ajusta o brilho (Lightness), e retorna o HEX.
-     * Esta função garante que a tonalidade (Hue) seja mantida, corrigindo o erro do rosa/vermelho.
+     * Esta função garante que a tonalidade (Hue) seja mantida.
      * @param {string} hex - Cor em formato Hex (#RRGGBB).
-     * @param {number} lightnessAdjustment - Valor percentual para diminuir (escurecer) ou aumentar (clarear) o L. Ex: -50 para escurecer 50%.
+     * @param {number} lightnessAdjustment - Valor decimal para diminuir ou aumentar o L. Ex: -0.6 para escurecer 60%.
      * @returns {string} Cor em formato Hex ajustado.
      */
     function adjustLightness(hex, lightnessAdjustment) {
-        // 1. Converte HEX para RGB
+        // 1. Converte HEX para RGB (código mantido)
         let r = 0, g = 0, b = 0;
         if (hex.length == 4) {
             r = parseInt(hex[1] + hex[1], 16);
@@ -35,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             b = parseInt(hex.slice(5, 7), 16);
         }
 
-        // 2. Converte RGB para HSL
+        // 2. Converte RGB para HSL (código mantido)
         r /= 255; g /= 255; b /= 255;
         let max = Math.max(r, g, b), min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
@@ -54,9 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 3. Aplica o ajuste de brilho (Luminosidade)
-        l = Math.max(0, Math.min(1, l + (lightnessAdjustment / 100)));
+        // O ajuste é feito diretamente no valor L (0 a 1)
+        l = Math.max(0, Math.min(1, l + lightnessAdjustment));
 
-        // 4. Converte HSL de volta para RGB (auxiliar)
+        // 4. Converte HSL de volta para RGB (auxiliar - código mantido)
         function hue2rgb(p, q, t) {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -72,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newG = hue2rgb(p, q, h);
         let newB = hue2rgb(p, q, h - 1/3);
 
-        // 5. Converte RGB para HEX final
+        // 5. Converte RGB para HEX final (código mantido)
         const toHex = (c) => Math.round(c * 255).toString(16).padStart(2, '0');
         return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
     }
@@ -95,25 +99,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let activeColorButton = null;
 
+    /**
+     * Aplica a nova cor ao tema e SALVA NO LOCAL STORAGE.
+     * Ajustado lightnessAdjustment de -0.6 (float) para refletir a nova função.
+     */
     function changeThemeColor(newPrimaryColor, button) {
         
         // 1. Define a COR PRIMÁRIA
         root.style.setProperty('--primary-color', newPrimaryColor);
         
-        // 2. Define a COR DE FUNDO DO CABEÇALHO/RODAPÉ (AGORA MANTÉM A TONALIDADE, MAS ESCURA)
-        // Escurece o tema primário em 60% para que fique sempre em um tom escuro do rosa, azul, etc.
-        const headerBgColor = adjustLightness(newPrimaryColor, -0.6); 
+        // 2. Define a COR DE FUNDO DO CABEÇALHO/RODAPÉ 
+        const headerBgColor = adjustLightness(newPrimaryColor, -0.6); // Escurece em 60%
         root.style.setProperty('--header-footer-bg', headerBgColor);
         
         // 3. Define a COR DE FUNDO PRINCIPAL DO SITE (fundo claro fixo)
         root.style.setProperty('--site-background', '#f8f9fa');
 
-        // 4. Remove o estado 'active' do botão anterior
+        // 4. Salva a cor no Local Storage
+        localStorage.setItem('themeColor', newPrimaryColor); // 👈 ARMAZENAMENTO
+
+        // 5. Remove o estado 'active' do botão anterior
         if (activeColorButton) {
             activeColorButton.classList.remove('active');
         }
 
-        // 5. Define o novo botão como ativo
+        // 6. Define o novo botão como ativo
         if (button) {
             button.classList.add('active');
             activeColorButton = button;
@@ -122,6 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para renderizar os botões da paleta
     function renderThemePalette() {
+        // Carrega a cor salva ou usa a primeira como padrão
+        const savedColor = localStorage.getItem('themeColor') || primaryColors[0]; // 👈 CARREGAMENTO
+        let defaultButton = null;
+
         primaryColors.forEach((color, index) => {
             const button = document.createElement('button');
             button.className = 'color-swatch-button';
@@ -134,24 +148,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
             themePalette.appendChild(button);
 
-            // Define a cor padrão (primeira da lista) como ativa na inicialização
-            if (index === 0) {
-                changeThemeColor(color, button);
+            // Marca o botão correspondente à cor salva/padrão
+            if (color === savedColor) {
+                defaultButton = button;
             }
         });
+        
+        // Aplica a cor do tema salva ou a primeira
+        changeThemeColor(savedColor, defaultButton);
     }
 
     renderThemePalette(); 
     
     // -------------------------------------------------------------
     
-    // Funções e Lógica de Formulário (Mantidas inalteradas)
+    // Funções de Formulário (Mantidas inalteradas)
     
     const capitalize = (s) => {
         if (typeof s !== 'string') return '';
         return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
+    /**
+     * Cria e retorna o elemento HTML do card (App).
+     */
+    const createAppCard = (name, imgSrc, link) => {
+        const card = document.createElement('div');
+        card.className = "app-card";
+        card.onclick = () => window.open(link, '_blank');
+        
+        const imageEl = document.createElement('img');
+        imageEl.src = imgSrc;
+        imageEl.alt = name;
+        imageEl.className = "app-icon";
+
+        const nameEl = document.createElement('h3');
+        nameEl.textContent = name;
+        nameEl.className = "app-name";
+
+        card.appendChild(imageEl);
+        card.appendChild(nameEl);
+        
+        return card;
+    };
+
+
+    /**
+     * Cria a seção de categoria e retorna o container de apps.
+     */
+    const createCategorySection = (categoryKey, categoryDisplayName, appendToContainer = true) => {
+        // Se a categoria já existe, retorna seu container de apps
+        if (categoryMap[categoryKey]) {
+            return categoryMap[categoryKey];
+        }
+
+        const categorySection = document.createElement('div');
+        categorySection.className = "category-section";
+        categorySection.id = categoryKey; 
+
+        const categoryTitle = document.createElement('h2');
+        categoryTitle.textContent = categoryDisplayName; 
+        categoryTitle.className = "category-title";
+
+        const categoryContainer = document.createElement('div');
+        categoryContainer.className = "category-container";
+
+        categorySection.appendChild(categoryTitle);
+        categorySection.appendChild(categoryContainer);
+        
+        if (appendToContainer) {
+             categoriesContainer.appendChild(categorySection);
+        }
+        
+        categoryMap[categoryKey] = categoryContainer;
+        createShortcutButton(categoryKey, categoryDisplayName, categorySection);
+        
+        return categoryContainer;
+    };
+    
     const createShortcutButton = (categoryKey, displayName, targetElement) => {
         if (document.getElementById(`shortcut-${categoryKey}`)) {
             return;
@@ -170,6 +244,24 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
+    // --- 1. LÓGICA DE CARREGAMENTO INICIAL DO LOCAL STORAGE ---
+    function loadSavedApps() {
+        appData.forEach(app => {
+            const categoryKey = app.categoryKey;
+            const categoryDisplayName = app.categoryDisplayName;
+            
+            // Cria ou recupera o container da categoria
+            const categoryContainer = createCategorySection(categoryKey, categoryDisplayName);
+            
+            // Cria e anexa o card do aplicativo
+            const card = createAppCard(app.name, app.imgSrc, app.link);
+            categoryContainer.appendChild(card);
+        });
+    }
+    
+    loadSavedApps(); // Chama a função para carregar os dados salvos
+    
+    
     // --- 2. LÓGICA DE ENVIO DO FORMULÁRIO ---
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -193,49 +285,25 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = function(event) {
             const imgSrc = event.target.result;
 
-            // 2.3 Cria a Categoria (Se Necessário)
-            if (!categoryMap[categoryKey]) {
-                const categorySection = document.createElement('div');
-                categorySection.className = "category-section";
-                categorySection.id = categoryKey; 
+            // 2.3 Cria ou obtém o Container da Categoria
+            const categoryContainer = createCategorySection(categoryKey, categoryDisplayName);
 
-                const categoryTitle = document.createElement('h2');
-                categoryTitle.textContent = categoryDisplayName; 
-                categoryTitle.className = "category-title";
-
-                const categoryContainer = document.createElement('div');
-                categoryContainer.className = "category-container";
-
-                categorySection.appendChild(categoryTitle);
-                categorySection.appendChild(categoryContainer);
-                categoriesContainer.appendChild(categorySection);
-                
-                categoryMap[categoryKey] = categoryContainer;
-                
-                // CRIA O NOVO BOTÃO DE ATALHO
-                createShortcutButton(categoryKey, categoryDisplayName, categorySection);
-            }
-
-            // 2.4 Cria o Card
-            const card = document.createElement('div');
-            card.className = "app-card";
-            card.onclick = () => window.open(link, '_blank');
+            // 2.4 Cria e Adiciona o Card
+            const card = createAppCard(name, imgSrc, link);
+            categoryContainer.appendChild(card);
             
-            const imageEl = document.createElement('img');
-            imageEl.src = imgSrc;
-            imageEl.alt = name;
-            imageEl.className = "app-icon";
-
-            const nameEl = document.createElement('h3');
-            nameEl.textContent = name;
-            nameEl.className = "app-name";
-
-            card.appendChild(imageEl);
-            card.appendChild(nameEl);
-            categoryMap[categoryKey].appendChild(card);
+            // 2.5 ARMAZENAMENTO: Salva o novo aplicativo na lista de dados
+            const newApp = {
+                name: name,
+                imgSrc: imgSrc, // A imagem em Data URL pode ser grande, mas é a maneira de salvar no Local Storage
+                link: link,
+                categoryKey: categoryKey,
+                categoryDisplayName: categoryDisplayName
+            };
+            appData.push(newApp);
+            localStorage.setItem('appData', JSON.stringify(appData)); // 👈 ARMAZENAMENTO NO LOCAL STORAGE
             
-            // 2.5 Limpeza do Formulário
-            
+            // 2.6 Limpeza do Formulário
             form.reset();
             document.getElementById('appImg').value = '';
             document.getElementById('appName').focus();
