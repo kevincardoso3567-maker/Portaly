@@ -16,17 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Variável para armazenar a lista de aplicativos
     let appData = JSON.parse(localStorage.getItem('appData')) || [];
     
-    // --- FUNÇÕES AUXILIARES DE COR (Correção do Escurecimento) ---
+    // --- FUNÇÕES DE PERSISTÊNCIA E COR ---
 
     /**
      * Converte HEX para HSL, ajusta o brilho (Lightness), e retorna o HEX.
-     * Esta função garante que a tonalidade (Hue) seja mantida.
-     * @param {string} hex - Cor em formato Hex (#RRGGBB).
-     * @param {number} lightnessAdjustment - Valor decimal para diminuir ou aumentar o L. Ex: -0.6 para escurecer 60%.
-     * @returns {string} Cor em formato Hex ajustado.
+     * Função mantida (é longa, mas correta)
      */
     function adjustLightness(hex, lightnessAdjustment) {
-        // 1. Converte HEX para RGB (código mantido)
         let r = 0, g = 0, b = 0;
         if (hex.length == 4) {
             r = parseInt(hex[1] + hex[1], 16);
@@ -38,13 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
             b = parseInt(hex.slice(5, 7), 16);
         }
 
-        // 2. Converte RGB para HSL (código mantido)
         r /= 255; g /= 255; b /= 255;
         let max = Math.max(r, g, b), min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
 
         if (max == min) {
-            h = s = 0; // Acinzentado
+            h = s = 0;
         } else {
             let d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -56,11 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
             h /= 6;
         }
 
-        // 3. Aplica o ajuste de brilho (Luminosidade)
-        // O ajuste é feito diretamente no valor L (0 a 1)
         l = Math.max(0, Math.min(1, l + lightnessAdjustment));
 
-        // 4. Converte HSL de volta para RGB (auxiliar - código mantido)
         function hue2rgb(p, q, t) {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -76,67 +68,41 @@ document.addEventListener('DOMContentLoaded', () => {
         let newG = hue2rgb(p, q, h);
         let newB = hue2rgb(p, q, h - 1/3);
 
-        // 5. Converte RGB para HEX final (código mantido)
         const toHex = (c) => Math.round(c * 255).toString(16).padStart(2, '0');
         return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
     }
     
-    // As 12 cores principais (Hex)
     const primaryColors = [
-        '#007bff', // Azul (Padrão)
-        '#28a745', // Verde
-        '#dc3545', // Vermelho
-        '#ffc107', // Amarelo/Ouro
-        '#6f42c1', // Roxo
-        '#17a2b8', // Ciano
-        '#fd7e14', // Laranja
-        '#e83e8c', // Rosa Choque
-        '#6c757d', // Cinza Escuro
-        '#00bcd4', // Turquesa
-        '#3f51b5', // Azul Índigo
-        '#795548', // Marrom
+        '#007bff', '#28a745', '#dc3545', '#ffc107', '#6f42c1', '#17a2b8', 
+        '#fd7e14', '#e83e8c', '#6c757d', '#00bcd4', '#3f51b5', '#795548',
     ];
 
     let activeColorButton = null;
 
-    /**
-     * Aplica a nova cor ao tema e SALVA NO LOCAL STORAGE.
-     * Ajustado lightnessAdjustment de -0.6 (float) para refletir a nova função.
-     */
     function changeThemeColor(newPrimaryColor, button) {
-        
-        // 1. Define a COR PRIMÁRIA
         root.style.setProperty('--primary-color', newPrimaryColor);
-        
-        // 2. Define a COR DE FUNDO DO CABEÇALHO/RODAPÉ 
-        const headerBgColor = adjustLightness(newPrimaryColor, -0.6); // Escurece em 60%
+        // Escurece em 60%
+        const headerBgColor = adjustLightness(newPrimaryColor, -0.6); 
         root.style.setProperty('--header-footer-bg', headerBgColor);
-        
-        // 3. Define a COR DE FUNDO PRINCIPAL DO SITE (fundo claro fixo)
         root.style.setProperty('--site-background', '#f8f9fa');
 
-        // 4. Salva a cor no Local Storage
-        localStorage.setItem('themeColor', newPrimaryColor); // 👈 ARMAZENAMENTO
+        localStorage.setItem('themeColor', newPrimaryColor);
 
-        // 5. Remove o estado 'active' do botão anterior
         if (activeColorButton) {
             activeColorButton.classList.remove('active');
         }
 
-        // 6. Define o novo botão como ativo
         if (button) {
             button.classList.add('active');
             activeColorButton = button;
         }
     }
 
-    // Função para renderizar os botões da paleta
     function renderThemePalette() {
-        // Carrega a cor salva ou usa a primeira como padrão
-        const savedColor = localStorage.getItem('themeColor') || primaryColors[0]; // 👈 CARREGAMENTO
+        const savedColor = localStorage.getItem('themeColor') || primaryColors[0];
         let defaultButton = null;
 
-        primaryColors.forEach((color, index) => {
+        primaryColors.forEach((color) => {
             const button = document.createElement('button');
             button.className = 'color-swatch-button';
             button.style.backgroundColor = color;
@@ -148,13 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             themePalette.appendChild(button);
 
-            // Marca o botão correspondente à cor salva/padrão
             if (color === savedColor) {
                 defaultButton = button;
             }
         });
         
-        // Aplica a cor do tema salva ou a primeira
         changeThemeColor(savedColor, defaultButton);
     }
 
@@ -162,30 +126,119 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // -------------------------------------------------------------
     
-    // Funções de Formulário (Mantidas inalteradas)
-    
     const capitalize = (s) => {
         if (typeof s !== 'string') return '';
         return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
+    const createShortcutButton = (categoryKey, displayName, targetElement) => {
+        if (document.getElementById(`shortcut-${categoryKey}`)) {
+            return;
+        }
+
+        const button = document.createElement('button');
+        button.textContent = displayName;
+        button.className = 'shortcut-button';
+        button.id = `shortcut-${categoryKey}`; 
+
+        button.addEventListener('click', () => {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        categoryShortcuts.appendChild(button);
+    };
+
+    /**
+     * Remove uma categoria e seu atalho se estiver vazia.
+     */
+    const cleanupCategory = (categoryKey) => {
+        const categoryContainer = categoryMap[categoryKey];
+        if (categoryContainer && categoryContainer.children.length === 0) {
+            // Remove a seção da categoria
+            const categorySection = document.getElementById(categoryKey);
+            if (categorySection) {
+                categorySection.remove();
+            }
+            // Remove o atalho
+            const shortcutButton = document.getElementById(`shortcut-${categoryKey}`);
+            if (shortcutButton) {
+                shortcutButton.remove();
+            }
+            // Limpa o mapa
+            delete categoryMap[categoryKey];
+        }
+    };
+
+    /**
+     * Salva o estado atual do appData no Local Storage.
+     */
+    const saveAppsToLocalStorage = () => {
+        localStorage.setItem('appData', JSON.stringify(appData));
+    };
+
+    /**
+     * Lógica de exclusão do cartão.
+     */
+    const handleDeleteApp = (event, appIndex) => {
+        // Impede que o clique no botão ative o clique do card (navegação)
+        event.stopPropagation();
+        
+        if (!confirm('Tem certeza que deseja remover este item?')) {
+            return;
+        }
+
+        // 1. Remove do DOM
+        const card = event.target.closest('.app-card');
+        if (card) {
+            const categoryContainer = card.parentNode;
+            const categorySection = categoryContainer.parentNode;
+            const categoryKey = categorySection.id; 
+            
+            card.remove();
+
+            // 2. Remove do array de dados e salva
+            appData.splice(appIndex, 1);
+            saveAppsToLocalStorage();
+
+            // 3. Verifica e limpa a categoria se estiver vazia
+            cleanupCategory(categoryKey);
+
+            // Recarrega o display para garantir que os índices dos botões restantes estejam corretos
+            reloadAppDisplay();
+        }
+    };
+
     /**
      * Cria e retorna o elemento HTML do card (App).
+     * @param {object} app - O objeto de dados do aplicativo.
+     * @param {number} index - O índice do aplicativo no array appData.
      */
-    const createAppCard = (name, imgSrc, link) => {
+    const createAppCard = (app, index) => {
         const card = document.createElement('div');
         card.className = "app-card";
-        card.onclick = () => window.open(link, '_blank');
+        // Navegação ocorre no clique do CARD (exceto no clique do botão)
+        card.onclick = () => window.open(app.link, '_blank');
         
         const imageEl = document.createElement('img');
-        imageEl.src = imgSrc;
-        imageEl.alt = name;
+        imageEl.src = app.imgSrc;
+        imageEl.alt = app.name;
         imageEl.className = "app-icon";
 
         const nameEl = document.createElement('h3');
-        nameEl.textContent = name;
+        nameEl.textContent = app.name;
         nameEl.className = "app-name";
 
+        // --- ATUALIZADO: Botão de Excluir com o novo ícone e classe ---
+        const deleteButton = document.createElement('button');
+        deleteButton.className = "delete-button";
+        deleteButton.innerHTML = " &times; "; // Usa &times; (x) ou "✖" para um visual mais limpo
+        deleteButton.setAttribute('aria-label', 'Excluir aplicativo');
+
+        // Adiciona o listener de exclusão, passando o índice
+        deleteButton.addEventListener('click', (e) => handleDeleteApp(e, index));
+
+        // Adiciona o botão de exclusão primeiro para o posicionamento
+        card.appendChild(deleteButton); 
         card.appendChild(imageEl);
         card.appendChild(nameEl);
         
@@ -217,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         categorySection.appendChild(categoryContainer);
         
         if (appendToContainer) {
-             categoriesContainer.appendChild(categorySection);
+              categoriesContainer.appendChild(categorySection);
         }
         
         categoryMap[categoryKey] = categoryContainer;
@@ -226,35 +279,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return categoryContainer;
     };
     
-    const createShortcutButton = (categoryKey, displayName, targetElement) => {
-        if (document.getElementById(`shortcut-${categoryKey}`)) {
-            return;
+    /**
+     * Limpa o display e recarrega os apps do array appData (usado após exclusão).
+     */
+    function reloadAppDisplay() {
+        // Limpa o DOM e o mapa
+        categoriesContainer.innerHTML = '';
+        categoryShortcuts.innerHTML = '';
+        
+        // Limpa o mapa da categoria
+        for (const key in categoryMap) {
+            delete categoryMap[key];
         }
-
-        const button = document.createElement('button');
-        button.textContent = displayName;
-        button.className = 'shortcut-button';
-        button.id = `shortcut-${categoryKey}`; 
-
-        button.addEventListener('click', () => {
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-
-        categoryShortcuts.appendChild(button);
-    };
-
+        
+        // Recarrega do zero
+        loadSavedApps(); 
+    }
 
     // --- 1. LÓGICA DE CARREGAMENTO INICIAL DO LOCAL STORAGE ---
     function loadSavedApps() {
-        appData.forEach(app => {
+        appData.forEach((app, index) => {
             const categoryKey = app.categoryKey;
             const categoryDisplayName = app.categoryDisplayName;
             
             // Cria ou recupera o container da categoria
             const categoryContainer = createCategorySection(categoryKey, categoryDisplayName);
             
-            // Cria e anexa o card do aplicativo
-            const card = createAppCard(app.name, app.imgSrc, app.link);
+            // Cria e anexa o card do aplicativo, passando o índice atual
+            const card = createAppCard(app, index);
             categoryContainer.appendChild(card);
         });
     }
@@ -285,25 +337,28 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = function(event) {
             const imgSrc = event.target.result;
 
-            // 2.3 Cria ou obtém o Container da Categoria
-            const categoryContainer = createCategorySection(categoryKey, categoryDisplayName);
-
-            // 2.4 Cria e Adiciona o Card
-            const card = createAppCard(name, imgSrc, link);
-            categoryContainer.appendChild(card);
-            
-            // 2.5 ARMAZENAMENTO: Salva o novo aplicativo na lista de dados
+            // 2.3 Objeto de Dados do Novo App
             const newApp = {
                 name: name,
-                imgSrc: imgSrc, // A imagem em Data URL pode ser grande, mas é a maneira de salvar no Local Storage
+                imgSrc: imgSrc,
                 link: link,
                 categoryKey: categoryKey,
                 categoryDisplayName: categoryDisplayName
             };
+
+            // 2.4 Adiciona o novo app ao array de dados e salva
             appData.push(newApp);
-            localStorage.setItem('appData', JSON.stringify(appData)); // 👈 ARMAZENAMENTO NO LOCAL STORAGE
+            saveAppsToLocalStorage();
             
-            // 2.6 Limpeza do Formulário
+            // 2.5 Cria ou obtém o Container da Categoria
+            const categoryContainer = createCategorySection(categoryKey, categoryDisplayName);
+
+            // 2.6 Cria e Adiciona o Card (usando o último índice do array)
+            const newIndex = appData.length - 1;
+            const card = createAppCard(newApp, newIndex);
+            categoryContainer.appendChild(card);
+            
+            // 2.7 Limpeza do Formulário
             form.reset();
             document.getElementById('appImg').value = '';
             document.getElementById('appName').focus();
