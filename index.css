@@ -181,7 +181,7 @@ body {
     gap: 15px;
 }
 
-input[type="text"], input[type="file"] {
+input[type="text"], input[type="file"], input[type="url"] {
     border: 1px solid #ced4da;
     padding: 14px;
     border-radius: 8px;
@@ -192,7 +192,7 @@ input[type="text"], input[type="file"] {
 
 input:focus {
     border-color: var(--primary-color); /* DINÂMICO */
-    box-shadow: 0 0 0 3px var(--primary-color); /* DINÂMICO */
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 40%, transparent); /* DINÂMICO (Adicionado mix) */
     outline: none;
 }
 
@@ -210,7 +210,7 @@ input:focus {
 }
 
 .submit-button:hover {
-    background-color: #0056b3; 
+    background-color: color-mix(in srgb, var(--primary-color) 80%, black); /* Escurece a cor primária */
 }
 
 .submit-button:active {
@@ -307,7 +307,9 @@ input:focus {
     align-items: center;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
-    /* Ajustado para responsividade: min-width permite que eles se ajustem melhor */
+    /* Adicionado position: relative e overflow: visible para o botão de exclusão */
+    position: relative; 
+    overflow: visible;
     min-width: 180px; 
     max-width: 220px;
     border: 2px solid transparent;
@@ -318,6 +320,51 @@ input:focus {
     box-shadow: var(--shadow-deep);
     border: 2px solid var(--primary-color); /* DINÂMICO */
 }
+
+/* === NOVO ESTILO: Botão de Excluir Aprimorado === */
+.delete-button {
+    /* Posicionamento */
+    position: absolute;
+    top: -12px; 
+    right: -12px; 
+    
+    /* Aparência */
+    background-color: var(--primary-color); /* Cor do tema */
+    color: var(--header-footer-text); /* Texto branco */
+    border: 3px solid var(--card-bg); /* Borda branca (fundo do card) */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10; 
+    
+    /* Formatação do conteúdo (o "X") */
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1; 
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    
+    /* Efeito e Sombra */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-out;
+}
+
+/* Efeito de Interação (Hover) */
+.delete-button:hover {
+    background-color: var(--accent-color); /* Cor de destaque (amarelo) no hover */
+    transform: scale(1.15) rotate(5deg); /* Aumenta e gira para chamar a atenção */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Estado Ativo/Clique */
+.delete-button:active {
+    transform: scale(1.05);
+}
+/* ================================================= */
+
 
 .app-icon {
     width: 80px;
@@ -363,12 +410,6 @@ input:focus {
 /* ================================================= */
 
 
-/* --- Telas Grandes (Laptops e Desktops) --- */
-@media (min-width: 992px) {
-    /* Manter estilos padrão (eles já estão otimizados para desktop) */
-}
-
-
 /* --- Telas Médias (Tablets em modo Paisagem - 768px a 991px) --- */
 @media (max-width: 991px) {
     .main-content {
@@ -385,7 +426,7 @@ input:focus {
     }
 
     .theme-palette {
-        grid-template-columns: repeat(4, 1fr); /* Reduz um pouco o grid de cores */
+        grid-template-columns: repeat(4, 1fr); 
         padding: 4px;
         gap: 4px;
     }
@@ -408,10 +449,10 @@ input:focus {
     }
 
     .header-content {
-        /* Permite que o logo e a paleta fiquem em duas linhas, se necessário */
+        /* Centralizado para melhor visualização em telas pequenas */
         flex-direction: column; 
         gap: 10px;
-        align-items: flex-start;
+        align-items: center; 
     }
     
     .logo {
@@ -430,7 +471,7 @@ input:focus {
     }
 
     .theme-palette {
-        grid-template-columns: repeat(6, 1fr); /* Volta a 6 por linha */
+        grid-template-columns: repeat(6, 1fr); 
         padding: 3px;
         gap: 3px;
     }
@@ -492,15 +533,11 @@ input:focus {
 /* --- Telas Ultra Pequenas (Celulares Antigos/Muito Estreitos - até 480px) --- */
 @media (max-width: 480px) {
     .header-content {
-        align-items: center; /* Centraliza tudo */
-    }
-
-    .theme-palette-wrapper {
-        justify-content: center;
+        align-items: center; 
     }
 
     .theme-palette {
-        grid-template-columns: repeat(4, 1fr); /* Coloca 4 por linha para melhor toque */
+        grid-template-columns: repeat(4, 1fr); 
     }
     
     .color-swatch-button {
@@ -513,7 +550,6 @@ input:focus {
     }
 
     .app-card {
-        /* Permite que o card ocupe um pouco mais de espaço se a tela for muito pequena */
         min-width: 140px; 
     }
 }
