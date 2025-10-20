@@ -1,18 +1,22 @@
 /* ================================================= */
-/* 0. Configuração Global e Variáveis CSS            */
+/* 0. Configuração Global e Variáveis CSS (Estáticas)*/
 /* ================================================= */
 :root {
-    /* ESTAS TRÊS CORES SÃO CONTROLADAS PELO JAVASCRIPT */
+    /* ESQUEMA DE CORES COM GRADIENTE ESTÁTICO */
     --primary-color: #007bff; 
-    --header-footer-bg: #212529; /* Fundo do cabeçalho e rodapé (Escuro) */
-    --site-background: #f8f9fa; /* Fundo do corpo do site (Claro) */
+    --gradient-start: #041066; 
+    --gradient-end: #491ccb;   
     
-    /* Cores Secundárias */
+    --text-color: #343a40; 
+    --main-text-color: #ffffff; /* Cor principal do texto (Branco) */
+    
+    --sidebar-bg: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+    --sidebar-link-hover: rgba(255, 255, 255, 0.2); 
+    --sidebar-text-color: #ffffff; /* Cor do texto da sidebar */
+
     --secondary-color: #28a745; 
     --accent-color: #ffc107; 
-    --card-bg: #ffffff;
-    --text-color: #343a40; 
-    --header-footer-text: #ffffff;
+    --card-bg: #ffffff; 
     --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.15); 
     --shadow-card: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
@@ -23,19 +27,18 @@
     padding: 0;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-color);
-    /* Transição para suavizar a troca de cores do tema */
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
 }
 
 body {
-    /* Fundo do site DINÂMICO */
-    background-color: var(--site-background);
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden; 
 }
 
-/* Scrollbar Style (usa --primary-color) */
+/* Scrollbar Style Global */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -51,119 +54,72 @@ body {
     background: #0056b3;
 }
 
-
-/* ================================================= */
-/* 1. HEADER (Cabeçalho)                             */
-/* ================================================= */
-.main-header {
-    /* Fundo do cabeçalho DINÂMICO */
-    background-color: var(--header-footer-bg);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    padding: 20px 30px; 
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-}
-
-.logo {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--accent-color);
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-/* ESTILO DA PALETA DE CORES */
-.theme-palette-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.theme-palette-wrapper label {
-    color: var(--header-footer-text); 
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.theme-palette {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
-    padding: 5px;
-    background-color: #343a40; 
-    border-radius: 8px;
-    border: 1px solid #495057;
-}
-
-.color-swatch-button {
-    width: 25px;
-    height: 25px;
-    border: 2px solid transparent;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
-    padding: 0;
-}
-
-.color-swatch-button:hover {
-    transform: scale(1.15);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
-.color-swatch-button.active {
-    border-color: var(--accent-color); 
-    transform: scale(1.1);
-    box-shadow: 0 0 10px var(--accent-color);
-}
-
-.main-nav {
-    display: none; 
-}
-
-
-/* ================================================= */
-/* 2. MAIN CONTENT (Corpo Principal)                 */
-/* ================================================= */
-.main-content {
-    flex-grow: 1;
-    padding: 40px 20px;
-    max-width: 1200px;
+/* ------------------------------------------------- */
+/* HUB HEADER */
+/* ------------------------------------------------- */
+.hub-header {
     width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 40px 20px 20px 20px;
 }
 
 .main-title {
-    font-size: 3.5rem;
+    font-size: 4rem; 
     font-weight: 800;
-    text-align: center;
-    margin-bottom: 40px;
-    color: var(--primary-color); /* DINÂMICO */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    text-align: left; 
+    margin-bottom: 5px; 
+    color: var(--main-text-color); 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
 }
 
-/* Formulário e Títulos */
-.form-section {
-    padding-bottom: 40px;
+.add-button-section {
+    text-align: left; 
+    margin-bottom: 20px;
 }
 
+.add-link-button {
+    background-color: var(--main-text-color); 
+    color: var(--gradient-end); 
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4); 
+}
+
+.add-link-button:hover {
+    background-color: #eeeeee;
+}
+
+/* ------------------------------------------------- */
+/* Formulário */
+/* ------------------------------------------------- */
 .form-container {
-    background: linear-gradient(145deg, var(--card-bg), #f0f3f6);
+    background: var(--card-bg); 
     padding: 30px;
     border-radius: 15px;
     box-shadow: var(--shadow-deep);
     width: 100%;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 20px auto; 
     border: 1px solid #e9ecef;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out;
+    overflow: hidden; 
+    max-height: 500px; 
+    opacity: 1;
+}
+
+.form-hidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    opacity: 0;
 }
 
 .form-title {
@@ -171,7 +127,7 @@ body {
     font-weight: 700;
     margin-bottom: 25px;
     color: var(--text-color);
-    border-left: 5px solid var(--primary-color); /* DINÂMICO */
+    border-left: 5px solid var(--primary-color);
     padding-left: 15px;
 }
 
@@ -191,13 +147,13 @@ input[type="text"], input[type="file"], input[type="url"] {
 }
 
 input:focus {
-    border-color: var(--primary-color); /* DINÂMICO */
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 40%, transparent); /* DINÂMICO (Adicionado mix) */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
     outline: none;
 }
 
 .submit-button {
-    background-color: var(--primary-color); /* DINÂMICO */
+    background-color: var(--primary-color);
     color: white;
     padding: 15px;
     border: none;
@@ -210,346 +166,299 @@ input:focus {
 }
 
 .submit-button:hover {
-    background-color: color-mix(in srgb, var(--primary-color) 80%, black); /* Escurece a cor primária */
+    background-color: #0056b3; 
 }
 
 .submit-button:active {
     transform: scale(0.99);
 }
 
-
 /* ================================================= */
-/* 3. CATEGORIES HUB (Cards e Listas)                */
+/* 2. LAYOUT PRINCIPAL (Sidebar + Conteúdo) */
 /* ================================================= */
-.categories-hub {
+
+.layout-container {
     display: flex;
-    flex-direction: column;
-    gap: 40px;
-    margin-top: 30px;
-}
-
-.hub-section-title {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: left;
-    color: var(--text-color);
-    margin-bottom: 10px;
-    padding-left: 10px;
-}
-
-/* Botões de atalho */
-.category-shortcuts-container {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 10px;
-    margin: 20px 0 40px 10px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.shortcut-button {
-    background-color: #f0f3f6; 
-    color: var(--text-color);
-    padding: 8px 15px;
-    border: 1px solid #ced4da;
-    border-radius: 20px; 
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    text-decoration: none; 
-    white-space: nowrap;
-}
-
-.shortcut-button:hover {
-    background-color: var(--primary-color); /* DINÂMICO */
-    color: white;
-    border-color: var(--primary-color); /* DINÂMICO */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.category-section {
-    padding: 15px 0;
-    border-radius: 12px;
-}
-
-.category-title {
-    /* AGORA USA A COR PRIMÁRIA DINÂMICA */
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--header-footer-text);
-    background-color: var(--primary-color); 
+    flex-grow: 1;
     width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 20px; 
+}
+
+/* ------------------------------------------------- */
+/* BARRA LATERAL (SIDEBAR) */
+/* ------------------------------------------------- */
+.sidebar {
+    width: 250px; 
+    min-width: 250px;
+    background-color: var(--sidebar-bg); 
+    padding: 20px 0;
+    margin-right: 30px; 
+    border-radius: 15px; 
+    height: fit-content; 
+    position: sticky; 
+    top: 20px; 
+    align-self: flex-start; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sidebar-text-color);
+    padding: 0 20px 10px 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav-list {
+    list-style: none;
+}
+
+.sidebar-nav-item a {
+    display: block;
     padding: 10px 20px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    /* Box shadow genérico para funcionar com todas as cores */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+    text-decoration: none;
+    color: var(--sidebar-text-color);
+    font-weight: 500;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.category-container {
-    display: flex;
-    overflow-x: auto; 
-    gap: 25px;
-    padding: 15px 5px;
-    width: 100%; 
+.sidebar-nav-item a:hover {
+    background-color: var(--sidebar-link-hover);
+    border-left: 5px solid var(--accent-color); 
+    padding-left: 15px;
 }
 
-/* Estilo do Card (App/Site) */
-.app-card {
+/* ------------------------------------------------- */
+/* CONTEÚDO PRINCIPAL E GRID DE CATEGORIAS */
+/* ------------------------------------------------- */
+.content-area {
+    flex-grow: 1; 
+    padding: 0; 
+    min-width: 0; 
+}
+
+.categories-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px; 
+    padding: 20px 0;
+}
+
+/* --- ESTILO DO CARTÃO DE CATEGORIA PRINCIPAL --- */
+.category-card {
     background-color: var(--card-bg);
-    box-shadow: var(--shadow-card);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-deep);
+    
+    border: 2px solid var(--primary-color); 
+    
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    scroll-margin-top: 20px; 
+}
+
+/* Contêiner para o Título e o Botão de Excluir */
+.category-title-container {
+    display: flex;
+    justify-content: space-between; 
     align-items: center;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
-    /* Adicionado position: relative e overflow: visible para o botão de exclusão */
-    position: relative; 
-    overflow: visible;
-    min-width: 180px; 
-    max-width: 220px;
-    border: 2px solid transparent;
+    padding: 15px 20px; 
+    margin: 0;
 }
 
-.app-card:hover {
-    transform: translateY(-8px) scale(1.03); 
-    box-shadow: var(--shadow-deep);
-    border: 2px solid var(--primary-color); /* DINÂMICO */
-}
-
-/* === NOVO ESTILO: Botão de Excluir Aprimorado === */
-.delete-button {
-    /* Posicionamento */
-    position: absolute;
-    top: -12px; 
-    right: -12px; 
-    
-    /* Aparência */
-    background-color: var(--primary-color); /* Cor do tema */
-    color: var(--header-footer-text); /* Texto branco */
-    border: 3px solid var(--card-bg); /* Borda branca (fundo do card) */
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10; 
-    
-    /* Formatação do conteúdo (o "X") */
-    font-size: 1.1rem;
+.category-title-card {
+    font-size: 1.8rem;
     font-weight: 700;
+    margin: 0;
+    /* Cor do texto definida pelo JS para contraste */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
     line-height: 1; 
-    display: flex; 
-    justify-content: center;
+}
+
+/* NOVO/ATUALIZADO: Estilo do botão de exclusão do CARTÃO (Categoria) */
+.delete-category-button {
+    background-color: transparent;
+    color: var(--main-text-color); 
+    border: 2px solid var(--main-text-color);
+    border-radius: 50%;
+    width: 32px; /* Aumentado ligeiramente */
+    height: 32px; /* Aumentado ligeiramente */
+    line-height: 1;
+    font-size: 1.4rem; /* Um pouco menor para caber melhor */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, border-color 0.2s;
+    display: flex;
     align-items: center;
-    padding: 0;
+    justify-content: center;
+    padding-bottom: 3px; 
+    flex-shrink: 0; /* Impede o botão de encolher */
+}
+
+.delete-category-button:hover,
+.delete-category-button:focus {
+    background-color: #ff3333; /* Vermelho vivo */
+    border-color: #ff3333;
+    transform: scale(1.1);
+    outline: none;
+}
+
+
+/* Contêiner interno para os links (com rolagem) */
+.category-links-container {
+    padding: 20px; 
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-grow: 1; 
     
-    /* Efeito e Sombra */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease-out;
+    max-height: 350px; 
+    overflow-y: auto; 
+    overflow-x: hidden;
+    
+    scrollbar-width: thin; 
+    scrollbar-color: var(--primary-color) #f1f1f1; 
 }
 
-/* Efeito de Interação (Hover) */
-.delete-button:hover {
-    background-color: var(--accent-color); /* Cor de destaque (amarelo) no hover */
-    transform: scale(1.15) rotate(5deg); /* Aumenta e gira para chamar a atenção */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+/* Webkit Scrollbar no Container de Links */
+.category-links-container::-webkit-scrollbar {
+    width: 6px;
 }
 
-/* Estado Ativo/Clique */
-.delete-button:active {
-    transform: scale(1.05);
+.category-links-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color); 
+    border-radius: 3px;
 }
-/* ================================================= */
 
+.category-links-container::-webkit-scrollbar-thumb:hover {
+    background: #0056b3;
+}
+
+/* --- ESTILO DO CARD DE LINK DENTRO DA CATEGORIA --- */
+.app-card-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa; 
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    position: relative;
+    border-left: 5px solid var(--category-link-color); 
+}
+
+.app-card-item:hover {
+    background-color: #f1f3f5;
+    transform: translateY(-2px);
+}
 
 .app-icon {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 15px;
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
     object-fit: contain;
-    border-radius: 50%; 
-    border: 3px solid var(--accent-color);
-    padding: 5px;
-    background-color: #fff;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    padding: 2px;
 }
 
 .app-name {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    text-align: center;
-    word-break: break-word;
+    flex-grow: 1;
     color: var(--text-color);
 }
 
-
-/* ================================================= */
-/* 4. FOOTER (Rodapé)                                */
-/* ================================================= */
-.main-footer {
-    /* Fundo do rodapé DINÂMICO */
-    background-color: var(--header-footer-bg);
-    color: var(--header-footer-text);
-    padding: 20px;
-    text-align: center;
-    margin-top: 50px;
+.delete-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0; 
+    transition: opacity 0.2s;
 }
 
-.main-footer p {
-    color: #adb5bd; 
-    font-size: 0.9rem;
-    margin: 5px 0;
+.app-card-item:hover .delete-button {
+    opacity: 1;
 }
 
+/* --- MEDIA QUERIES --- */
+@media (max-width: 1024px) {
+    .layout-container {
+        flex-direction: column;
+        padding: 0 15px;
+    }
 
-/* ================================================= */
-/* 5. MEDIA QUERIES (Responsividade)                 */
-/* ================================================= */
+    .sidebar {
+        width: 100%;
+        min-width: 100%;
+        margin-right: 0;
+        margin-bottom: 30px; 
+        position: static; 
+    }
+    
+    .sidebar-title {
+        border-bottom: none;
+    }
 
+    .sidebar-nav-list {
+        display: flex;
+        flex-wrap: wrap; 
+        gap: 8px;
+        padding: 0 20px 10px 20px;
+    }
+    
+    .sidebar-nav-item a {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-left: none;
+    }
+    
+    .sidebar-nav-item a:hover {
+        border-left: none;
+        background-color: var(--sidebar-link-hover);
+    }
+}
 
-/* --- Telas Médias (Tablets em modo Paisagem - 768px a 991px) --- */
-@media (max-width: 991px) {
-    .main-content {
-        padding: 30px 15px;
+@media (max-width: 767px) {
+    .hub-header {
+        padding: 20px 15px 10px 15px;
     }
     
     .main-title {
         font-size: 3rem;
-        margin-bottom: 30px;
     }
-
-    .logo {
-        font-size: 2rem;
-    }
-
-    .theme-palette {
-        grid-template-columns: repeat(4, 1fr); 
-        padding: 4px;
-        gap: 4px;
-    }
-
-    .color-swatch-button {
-        width: 22px;
-        height: 22px;
-    }
-
-    .form-container {
-        padding: 25px;
+    
+    .categories-hub-grid {
+        grid-template-columns: 1fr; 
     }
 }
 
-
-/* --- Telas Pequenas (Celulares e Tablets em modo Retrato - até 767px) --- */
-@media (max-width: 767px) {
-    .main-header {
-        padding: 15px 15px;
-    }
-
-    .header-content {
-        /* Centralizado para melhor visualização em telas pequenas */
-        flex-direction: column; 
-        gap: 10px;
-        align-items: center; 
-    }
-    
-    .logo {
-        font-size: 1.8rem;
-    }
-
-    /* Move a paleta para o centro inferior do cabeçalho */
-    .theme-palette-wrapper {
-        width: 100%;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .theme-palette-wrapper label {
-        font-size: 0.9rem;
-    }
-
-    .theme-palette {
-        grid-template-columns: repeat(6, 1fr); 
-        padding: 3px;
-        gap: 3px;
-    }
-    
-    .color-swatch-button {
-        width: 20px;
-        height: 20px;
-    }
-
-    .main-content {
-        padding: 20px 10px;
-    }
-
+@media (max-width: 480px) {
     .main-title {
         font-size: 2.5rem;
-        margin-bottom: 25px;
-    }
-
-    .form-container {
-        padding: 20px;
-    }
-
-    .form-title {
-        font-size: 1.5rem;
     }
     
-    /* Categorias */
-    .hub-section-title {
-        font-size: 1.8rem;
-    }
-
-    .category-title {
-        font-size: 1.4rem;
-        padding: 8px 15px;
-    }
-    
-    /* Cartões */
-    .app-card {
-        min-width: 150px;
-        max-width: 180px;
-    }
-
-    .app-icon {
-        width: 60px;
-        height: 60px;
-    }
-
-    .app-name {
-        font-size: 1.1rem;
-    }
-
-    /* Footer */
-    .main-footer {
-        padding: 15px;
-    }
-}
-
-
-/* --- Telas Ultra Pequenas (Celulares Antigos/Muito Estreitos - até 480px) --- */
-@media (max-width: 480px) {
-    .header-content {
-        align-items: center; 
-    }
-
-    .theme-palette {
-        grid-template-columns: repeat(4, 1fr); 
-    }
-    
-    .color-swatch-button {
-        width: 25px;
-        height: 25px;
-    }
-
-    .main-title {
-        font-size: 2rem;
-    }
-
-    .app-card {
-        min-width: 140px; 
+    /* Ajuste para o botão do cartão em telas muito pequenas */
+    .delete-category-button {
+        width: 28px;
+        height: 28px;
+        font-size: 1.2rem;
     }
 }
