@@ -8,52 +8,39 @@
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="header-content">
-            <a href="#" class="logo"></a>
-            
-            <div class="theme-palette-wrapper">
-                <label>Cor Tema:</label>
-                <div id="themePalette" class="theme-palette">
-                    </div>
-            </div>
-            
-            <nav class="main-nav">
-                </nav>
-        </div>
+    <header class="hub-header">
+        <h1 class="main-title hub-title-corner">Portaly</h1>
+
+        <section class="add-button-section">
+            <button id="openFormModal" class="add-link-button">Adicionar novo link</button>
+        </section>
     </header>
 
-    <main class="main-content">
-        <h1 class="main-title">Hub links</h1>
+    <div id="formContainerContent" class="form-container form-hidden">
+        <h2 class="form-title">Adicionar novo app/site</h2>
+        <form id="appForm" class="app-form">
+            <input type="text" id="appName" placeholder="Nome do app/site" required>
+            <input type="file" id="appImg" accept="image/*" required>
+            <input type="url" id="appLink" placeholder="URL do site/app" required>
+            <input type="text" id="appCategory" placeholder="Categoria (Ex: Matemática, Idiomas)" required>
+            <button type="submit" class="submit-button">Gerar Cartão</button>
+        </form>
+    </div>
 
-        <section class="form-section" id="appFormContainer"> 
-            
-            <div id="formContainerContent" class="form-container">
-                <h2 class="form-title">Adicionar novo app/site</h2>
-                <form id="appForm" class="app-form">
-                    <input type="text" id="appName" placeholder="Nome do app/site" required>
-                    <input type="file" id="appImg" accept="image/*" required>
-                    <input type="text" id="appLink" placeholder="URL do site/app" required>
-                    <input type="text" id="appCategory" placeholder="Categoria (Ex: Matemática, Idiomas)" required>
-                    <button type="submit" class="submit-button">Gerar Cartão</button>
-                </form>
-            </div>
-
-        </section>
-
-        <section id="categoriesContainer" class="categories-hub">
-            <h2 class="hub-section-title">Navegue pelas suas Categorias</h2>
-            
-            <div id="categoryShortcuts" class="category-shortcuts-container">
-                </div>
-
-        </section>
-    </main>
-
-    <footer class="main-footer">
-        <p>&copy; 2025 Hub de Estudos. Todos os direitos reservados.</p>
-        <p>Desenvolvido com foco e produtividade.</p>
-    </footer>
+    <div class="layout-container">
+        
+        <nav id="sidebar" class="sidebar">
+            <h3 class="sidebar-title">Categorias</h3>
+            <ul id="sidebar-nav-list" class="sidebar-nav-list">
+                </ul>
+        </nav>
+        
+        <main class="main-content content-area">
+            <section id="categoriesContainer" class="categories-hub-grid">
+                </section>
+        </main>
+        
+    </div>
 
     <script src="index.js"></script>
 </body>
